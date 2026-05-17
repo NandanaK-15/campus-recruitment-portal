@@ -18,7 +18,7 @@ db.sequelize.sync()
 // Home route
 app.get("/", (req, res) => {
   res.json({
-    message: "Welcome to Campus Recruitment Portal API",
+    message: "Welcome to Campus Recruitment Portal API - v2.0",
     version: "1.0.0",
     endpoints: {
       getAllStudents: "GET /api/students",
