@@ -1,52 +1,17 @@
 const db = require("../models");
-const Student = db.students;
+const User = db.users;
 
-// Hardcoded admin credentials
-const ADMIN = {
-  username: "admin",
-  password: "admin123",
-  role: "admin",
-  name: "Administrator"
-};
-
-exports.login = (req, res) => {
-  const { username, password } = req.body;
-
-  // Check admin
-  if (username === ADMIN.username && password === ADMIN.password) {
-    return res.json({
-      success: true,
-      role: "admin",
-      name: ADMIN.name,
-      message: "Admin login successful"
-    });
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  if (email === "admin@company.com" && password === "admin123") {
+    return res.json({ success: true, role: "admin", name: "Admin", id: 0, email });
   }
-
-  // Check student by name as username and id as password
-  Student.findOne({ where: { name: username } })
-    .then(student => {
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Invalid username or password"
-        });
-      }
-      // Student password is their id (simple for demo)
-      if (String(student.id) !== String(password)) {
-        return res.status(401).json({
-          success: false,
-          message: "Invalid username or password"
-        });
-      }
-      return res.json({
-        success: true,
-        role: "student",
-        name: student.name,
-        id: student.id,
-        message: "Student login successful"
-      });
-    })
-    .catch(err => {
-      res.status(500).json({ success: false, message: err.message });
-    });
+  try {
+    const user = await User.findOne({ where: { email, password } });
+    if (!user) return res.status(401).json({ success: false, message: "Invalid email or password" });
+    if (user.status === "inactive") return res.status(401).json({ success: false, message: "Account is inactive. Contact admin." });
+    res.json({ success: true, role: user.role, name: user.name, id: user.id, email: user.email, department: user.department });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };

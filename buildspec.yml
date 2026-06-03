@@ -1,22 +1,17 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Installing dependencies on `date`
+      - echo Installing dependencies
       - npm install
-
   build:
     commands:
       - echo Build started on `date`
-      - echo Packaging Campus Recruitment Portal
-
   post_build:
     commands:
-      - echo Build completed on `date`
-
+      - echo Build completed
 artifacts:
   files:
     - '**/*'
